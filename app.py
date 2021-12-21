@@ -1,11 +1,11 @@
-from flask import Flask, request, redirect, jsonify
+from flask import Flask, request, jsonify
 from flask.wrappers import Response
 from flask_pymongo import PyMongo
 from pymongo import message
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash
 from bson import json_util
 from bson.objectid import ObjectId
-from werkzeug.wrappers import response
+
 
 
 app = Flask(__name__)
@@ -42,11 +42,13 @@ def create_user():
         return not_found()
 
 
+
 @app.route('/users', methods=['GET'])
 def get_users():
     user_data = mongo.db.users.find()
     response = json_util.dumps(user_data)
     return Response(response, mimetype='application/json')
+
 
 
 @app.route('/users/<id>', methods=['GET'])
@@ -56,11 +58,11 @@ def get_filter_user(id):
     return Response(response, mimetype='application/json' )
 
 
+
 @app.route('/users/<id>', methods=['DELETE'])
 def delete_user(id):
     mongo.db.users.delete_one({"_id":ObjectId(id)})
     return jsonify({'message':'User Was deleted'})
-
 
 
 
@@ -86,6 +88,7 @@ def update_user(id):
 
 
 
+
 @app.errorhandler(404)
 def not_found(error=None):
     message =jsonify({
@@ -94,8 +97,6 @@ def not_found(error=None):
     })
     message.status_code = 404
     return message
-
-
 
 
 
